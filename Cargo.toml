@@ -1,0 +1,10 @@
+[package]
+name = "sense"
+version = "0.1.0"
+authors = ["pi"]
+
+[dependencies]
+sensehat = "0.4"
+dogstatsd = { git = "https://github.com/mortendahl/dogstatsd-rs" }
+chrono = "0.4"
+timer = "0.1"
