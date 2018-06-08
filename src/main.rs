@@ -10,7 +10,7 @@ fn main() {
 
     let reader = std::thread::spawn(move || {
         loop {
-            
+
             if let Ok(temperature) = hat.get_temperature_from_pressure() {
                 client.gauge("sensehat.temperature", temperature.as_celsius(), &tags).unwrap();
             }
@@ -20,7 +20,7 @@ fn main() {
             }
 
             if let Ok(humidity) = hat.get_humidity() {
-                client.gauge("sensehat.humidity", pressure.as_percent(), &tags).unwrap();
+                client.gauge("sensehat.humidity", humidity.as_percent(), &tags).unwrap();
             }
 
             std::thread::sleep(std::time::Duration::from_secs(5));
