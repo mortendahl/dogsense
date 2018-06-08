@@ -4,22 +4,28 @@ extern crate dogstatsd;
 use dogstatsd::Client;
 
 fn main() {
+    let mut hat = sensehat::SenseHat::new().unwrap();
+    let client = Client::new().unwrap();
+    let tags = ["hardware:pi3"];
 
-  let mut hat = sensehat::SenseHat::new().unwrap();
-  let client = Client::new().unwrap();
-  let tags = ["hardware:pi3"];
+    let reader = std::thread::spawn(move || {
+        loop {
+            
+            if let Ok(temperature) = hat.get_temperature_from_pressure() {
+                client.gauge("sensehat.temperature", temperature.as_celsius(), &tags).unwrap();
+            }
 
-  let reader = std::thread::spawn(move || {
-    loop {
-      let temperature = hat.get_temperature_from_pressure();
-      //let temperature = hat.get_orientation();
-      if let Ok(temperature) = temperature {
-         println!("{}", temperature.as_celsius());
-         client.gauge("sensehat.temperature", temperature.as_celsius(), &tags).unwrap();
-      //println!("{:?}", temperature);      
-}
-    std::thread::sleep(std::time::Duration::from_millis(1000)); 
-  }});
+            if let Ok(pressure) = hat.get_pressure() {
+                client.gauge("sensehat.pressure", pressure.as_hectopascals(), &tags).unwrap();
+            }
 
-  reader.join();
+            if let Ok(humidity) = hat.get_humidity() {
+                client.gauge("sensehat.humidity", pressure.as_percent(), &tags).unwrap();
+            }
+
+            std::thread::sleep(std::time::Duration::from_secs(5));
+        }
+    });
+
+    reader.join();
 }
