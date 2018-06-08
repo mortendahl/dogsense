@@ -12,15 +12,21 @@ fn main() {
         loop {
 
             if let Ok(temperature) = hat.get_temperature_from_pressure() {
-                client.gauge("sensehat.temperature", temperature.as_celsius(), &tags).unwrap();
+                let temperature = temperature.as_celsius();
+                println!("Temperature: {:?}", temperature);
+                client.gauge("sensehat.temperature", temperature, &tags).unwrap();
             }
 
             if let Ok(pressure) = hat.get_pressure() {
-                client.gauge("sensehat.pressure", pressure.as_hectopascals(), &tags).unwrap();
+                let pressure = pressure.as_hectopascals();
+                println!("Pressure: {:?}", pressure);
+                client.gauge("sensehat.pressure", pressure, &tags).unwrap();
             }
 
             if let Ok(humidity) = hat.get_humidity() {
-                client.gauge("sensehat.humidity", humidity.as_percent(), &tags).unwrap();
+                let humidity = humidity.as_percent();
+                println!("Humidity: {:?}", humidity);
+                client.gauge("sensehat.humidity", humidity, &tags).unwrap();
             }
 
             std::thread::sleep(std::time::Duration::from_secs(5));
